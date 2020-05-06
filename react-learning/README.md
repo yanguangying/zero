@@ -1,4 +1,6 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Create React App构建的应用，用于联系react相关知识点。
+
+This project was bootstrapped with `Create React App`.
 
 ## Available Scripts
 
