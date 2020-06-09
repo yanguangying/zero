@@ -12,7 +12,7 @@ var time = 0;
 var pause = true;
 // 定时器
 var set_timer;
-// 可以移动的位置
+// 可以移动的位置，索引为位置，值为可以移动的方向
 var d_direct = new Array(
     [0],
     [2,4],
@@ -38,7 +38,7 @@ var d_posXY = new Array(
     [150,300],
     [300,300],
     );
-// 保存编号
+// 保存编号，索引为位置，值为方块上的数字
 var d = new Array(10);
 d[1] = 1;
 d[2] = 2;
@@ -50,16 +50,71 @@ d[7] = 7;
 d[8] = 8;
 d[9] = 0;
 
+window.onload = function(){
+    reset();
+}
+
+function reset() {
+    time = 0;
+    random_d();
+    if(pause){
+        start();
+    }
+}
+
+// 将数字乱序排列
+function random_d() {
+    for(var i = 9;i>1;--i){
+        // 随机一个目的位置
+        var to = parseInt(Math.random()*(i-1)+1);
+        if(d[i]!=0){
+            document.getElementById("d"+d[i]).style.left = d_posXY[to][0]+"px";
+            document.getElementById("d"+d[i]).style.top = d_posXY[to][1]+"px";
+        }
+        if(d[to]!=0){
+            document.getElementById("d"+d[to]).style.left = d_posXY[i][0]+"px";
+            document.getElementById("d"+d[to]).style.top = d_posXY[i][1]+"px";
+        }
+        // 更改d中的数字顺序
+        var tem = d[to];
+        d[to] = d[i];
+        d[i] = tem;
+    }
+}
+
+function start() {
+    if(pause){
+        document.getElementById("start").innerHTML="暂停";
+        pause = false;
+        set_timer = setInterval(timer,1000);
+    }else{
+        document.getElementById("start").innerHTML="开始";
+        pause = true;
+        clearInterval(set_timer);
+    }
+}
+
+function timer(){
+    time +=1;
+    var min = parseInt(time/60);
+    var sec = time%60;
+    document.getElementById("timer").innerHTML = min+"分"+sec+"秒";
+}
+
 function move(id){
+    debugger
     var i = 1;
     for(i= 1;i<10;++i){
         if(d[i] == id){
+            console.log(i);
+            
             break;
         }
     }
     var target_d = 0;
     target_d = whereCanTo(i);
     if(target_d != 0){
+        // 能动将索引位置的值改变，并调整样式移动数字
         d[i] = 0;
         d[target_d] = id;
         document.getElementById("d"+id).style.left = d_posXY[target_d][0]+"px";
@@ -89,65 +144,10 @@ function whereCanTo(cur_div){
             break;
         }
     }
+    // 判断能否移动，能动返回目标位置索引，不能动返回0
     if(move_flag == true){
         return d_direct[cur_div][j];
     }else{
         return 0;
     }
-}
-
-function timer(){
-    time +=1;
-    var min = parseInt(time/60);
-    var sec = time%60;
-    console.log(min,sec);
-    
-    document.getElementById("timer").innerHTML = min+"分"+sec+"秒";
-}
-
-function start() {
-    console.log(pause);
-    
-    if(pause){
-        document.getElementById("start").innerHTML="暂停";
-        pause = false;
-        console.log(timer);
-        
-        set_timer = setInterval(timer,1000);
-    }else{
-        document.getElementById("start").innerHTML="开始";
-        pause = true;
-        clearInterval(set_timer);
-    }
-}
-
-function reset() {
-    console.log("reset");
-    
-    time = 0;
-    random_d();
-    if(pause){
-        start();
-    }
-}
-
-function random_d() {
-    for(var i = 9;i>1;--i){
-        var to = parseInt(Math.random()*(i-1)+1);
-        if(d[i]!=0){
-            document.getElementById("d"+d[i]).style.left = d_posXY[to][0]+"px";
-            document.getElementById("d"+d[i]).style.top = d_posXY[to][1]+"px";
-        }
-        if(d[to]!=0){
-            document.getElementById("d"+d[to]).style.left = d_posXY[i][0]+"px";
-            document.getElementById("d"+d[to]).style.top = d_posXY[i][1]+"px";
-        }
-        var tem = d[to];
-        d[to] = d[i];
-        d[i] = tem;
-    }
-}
-
-window.onload = function(){
-    reset();
 }
